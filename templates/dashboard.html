@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Assignment 3</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1>📊 Dashboard - Hugging Face Model</h1>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="dashboard">
+            <h2>Model Performance Metrics</h2>
+
+            <div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, #f6f8ff, #eef2ff); border: 1px solid #dbe4ff;">
+                <h3>📡 Active Backend</h3>
+                <p><strong>Model Type:</strong> {{ stats.model_type }}</p>
+                <p><strong>Status:</strong> {{ "Ready" if stats.available else "Fallback / Demo" }}</p>
+                {% if stats.message %}
+                <p style="color: #666; margin-top: 0.4rem;">{{ stats.message }}</p>
+                {% endif %}
+            </div>
+
+            <div class="row">
+                <div class="card">
+                    <h3>🎯 Accuracy</h3>
+                    <div style="font-size: 2.5rem; color: #667eea; text-align: center; margin: 1rem 0;">
+                        {% if stats.available %}
+                            {{ (stats.accuracy * 100) | round(2) }}%
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </div>
+                    <p style="text-align: center; color: #666;">
+                        {% if stats.available %}
+                            {{ stats.test_samples }} test samples correctly classified
+                        {% else %}
+                            Metrics not available
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>🎯 Precision</h3>
+                    <div style="font-size: 2.5rem; color: #667eea; text-align: center; margin: 1rem 0;">
+                        {% if stats.available %}
+                            {{ stats.precision | round(4) }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </div>
+                    <p style="text-align: center; color: #666;">
+                        Positive prediction accuracy
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>🎯 Recall</h3>
+                    <div style="font-size: 2.5rem; color: #667eea; text-align: center; margin: 1rem 0;">
+                        {% if stats.available %}
+                            {{ stats.recall | round(4) }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </div>
+                    <p style="text-align: center; color: #666;">
+                        True positive rate
+                    </p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="card">
+                    <h3>🎯 F1-Score</h3>
+                    <div style="font-size: 2.5rem; color: #667eea; text-align: center; margin: 1rem 0;">
+                        {% if stats.available %}
+                            {{ stats.f1_score | round(4) }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </div>
+                    <p style="text-align: center; color: #666;">
+                        Harmonic mean of precision & recall
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>🎯 ROC-AUC</h3>
+                    <div style="font-size: 2.5rem; color: #667eea; text-align: center; margin: 1rem 0;">
+                        {% if stats.available %}
+                            {{ stats.roc_auc | round(4) }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </div>
+                    <p style="text-align: center; color: #666;">
+                        Area under ROC curve
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>📊 Test Samples</h3>
+                    <div style="font-size: 2.5rem; color: #667eea; text-align: center; margin: 1rem 0;">
+                        {% if stats.available %}
+                            {{ stats.test_samples }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </div>
+                    <p style="text-align: center; color: #666;">
+                        Total evaluation samples
+                    </p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="card" style="grid-column: 1 / -1;">
+                    <h3>📊 Confusion Matrix</h3>
+                    <div id="confusion-matrix"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="card">
+                    <h3>📈 Metrics Summary</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Accuracy</td>
+                                <td>{% if stats.available %}{{ (stats.accuracy * 100) | round(2) }}%{% else %}N/A{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>Precision</td>
+                                <td>{% if stats.available %}{{ stats.precision | round(4) }}{% else %}N/A{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>Recall</td>
+                                <td>{% if stats.available %}{{ stats.recall | round(4) }}{% else %}N/A{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>F1-Score</td>
+                                <td>{% if stats.available %}{{ stats.f1_score | round(4) }}{% else %}N/A{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>ROC-AUC</td>
+                                <td>{% if stats.available %}{{ stats.roc_auc | round(4) }}{% else %}N/A{% endif %}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h3>🤖 Model Information</h3>
+                    <ul>
+                        <li><strong>Model:</strong> {{ stats.model_type }}</li>
+                        <li><strong>Task:</strong> {{ stats.task }}</li>
+                        <li><strong>Classes:</strong> {{ stats.classes | join(', ') }}</li>
+                        <li><strong>Max Sequence:</strong> {{ stats.max_sequence_length }} tokens</li>
+                        <li><strong>Framework:</strong> PyTorch</li>
+                        <li><strong>Library:</strong> Transformers (Hugging Face)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🔍 Model Insights</h3>
+                <ul style="font-size: 1.05rem; line-height: 1.8;">
+                    <li><strong>DistilBERT:</strong> Lightweight version of BERT (40% smaller, 60% faster)</li>
+                    <li><strong>Transfer Learning:</strong> Pre-trained on large corpus, fine-tuned on Fake News data</li>
+                    <li><strong>Contextual Understanding:</strong> Understands word relationships and context</li>
+                    <li><strong>Accuracy:</strong> {{ (stats.accuracy * 100) | round(2) }}% on evaluation set</li>
+                    <li><strong>Advantages:</strong> High accuracy, contextual understanding, supports multiple languages</li>
+                    <li><strong>vs Traditional ML:</strong> Better performance than Logistic Regression, Decision Tree, KNN</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Assignment 3 - Hugging Face Model Deployment | ML Course</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        {% if stats.available %}
+        // Confusion Matrix
+        const cm = {{ stats.confusion_matrix | tojson }};
+        
+        const z = [
+            [cm[0][0], cm[0][1]],
+            [cm[1][0], cm[1][1]]
+        ];
+        
+        const labels = ['Fake News', 'Real News'];
+        
+        const confusionData = [{
+            z: z,
+            x: ['Predicted Fake', 'Predicted Real'],
+            y: ['Actual Fake', 'Actual Real'],
+            type: 'heatmap',
+            colorscale: 'Blues',
+            text: z,
+            texttemplate: '%{text}',
+            textfont: {size: 14, color: 'black'},
+            hoverongaps: false
+        }];
+        
+        const layout = {
+            title: 'Confusion Matrix',
+            xaxis: {title: 'Predicted'},
+            yaxis: {title: 'Actual'},
+            height: 400
+        };
+        
+        Plotly.newPlot('confusion-matrix', confusionData, layout, {responsive: true});
+        {% else %}
+        document.getElementById('confusion-matrix').innerText = 'Confusion matrix not available (metrics not generated)';
+        {% endif %}
+    </script>
+</body>
+</html>
