@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment 3 - Hugging Face Model</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1>🤗 Hugging Face: Fake News Detection</h1>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="#requirements">Requirements</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="hero">
+            <h2>DistilBERT for Fake News Detection</h2>
+            <p>Fine-tuned Transformer Model deployed via Flask REST API</p>
+        </section>
+
+        <section class="content" style="padding: 1.25rem 1.5rem; margin-top: -0.5rem;">
+            <p><strong>Active backend:</strong> {{ stats.model_type }}</p>
+            {% if stats.message %}
+            <p style="color: #666; margin-top: 0.35rem;">{{ stats.message }}</p>
+            {% endif %}
+        </section>
+
+        <section class="content">
+            <h2>Project Overview</h2>
+            <p>
+                This assignment demonstrates the integration and deployment of a pre-trained Hugging Face model
+                (DistilBERT) for Fake News Detection. The model is fine-tuned on a real-world dataset and 
+                deployed using Flask for easy access via REST API endpoints.
+            </p>
+        </section>
+
+        <div class="row">
+            <div class="card">
+                <h3>🤖 Model Details</h3>
+                <ul>
+                    <li><strong>Base Model:</strong> DistilBERT (Hugging Face)</li>
+                    <li><strong>Task:</strong> Binary Text Classification</li>
+                    <li><strong>Classes:</strong> Fake News / Real News</li>
+                    <li><strong>Max Sequence Length:</strong> 256 tokens</li>
+                    <li><strong>Fine-tuning Epochs:</strong> 3</li>
+                    <li><strong>Training Samples:</strong> 5,000</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>📊 Model Performance</h3>
+                <ul>
+                    <li><strong>Accuracy:</strong> {{ stats.accuracy * 100 | round(2) }}%</li>
+                    <li><strong>Precision:</strong> {{ stats.precision | round(4) }}</li>
+                    <li><strong>Recall:</strong> {{ stats.recall | round(4) }}</li>
+                    <li><strong>F1-Score:</strong> {{ stats.f1_score | round(4) }}</li>
+                    <li><strong>ROC-AUC:</strong> {{ stats.roc_auc | round(4) }}</li>
+                    <li><strong>Test Samples:</strong> {{ stats.test_samples }}</li>
+                </ul>
+            </div>
+        </div>
+
+        <section class="content">
+            <h2>Quick Prediction Test</h2>
+            <form id="prediction-form">
+                <textarea id="news-text" placeholder="Paste news content here..." rows="8"></textarea>
+                <button type="submit" class="btn">🔍 Predict</button>
+            </form>
+
+            <div id="prediction-result" style="display: none; margin-top: 2rem;">
+                <div class="card">
+                    <h3>Prediction Result</h3>
+                    <div id="result-content"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content" id="requirements">
+            <h2>Assignment Requirements Checklist</h2>
+            <div class="checklist">
+                <label><input type="checkbox" checked disabled> Use pre-trained Hugging Face model</label>
+                <label><input type="checkbox" checked disabled> Fine-tune on custom dataset</label>
+                <label><input type="checkbox" checked disabled> Implement Flask deployment</label>
+                <label><input type="checkbox" checked disabled> Create REST API endpoints</label>
+                <label><input type="checkbox" checked disabled> Comprehensive model metrics (Accuracy, Precision, Recall, F1, ROC-AUC)</label>
+                <label><input type="checkbox" checked disabled> Interactive dashboard</label>
+                <label><input type="checkbox" checked disabled> Batch prediction support</label>
+                <label><input type="checkbox" checked disabled> Model comparison (HF vs Traditional ML)</label>
+                <label><input type="checkbox" checked disabled> Confusion matrix visualization</label>
+                <label><input type="checkbox" checked disabled> Full documentation</label>
+            </div>
+        </section>
+
+        <section class="content">
+            <h2>Key Features</h2>
+            <ul class="features-list">
+                <li>✓ <strong>Pre-trained Model:</strong> DistilBERT from Hugging Face (distilbert-base-uncased)</li>
+                <li>✓ <strong>Transfer Learning:</strong> Fine-tuned on Fake News dataset</li>
+                <li>✓ <strong>REST API:</strong> Complete prediction endpoints</li>
+                <li>✓ <strong>Batch Processing:</strong> Process multiple texts at once</li>
+                <li>✓ <strong>Confidence Scores:</strong> Probability for both classes</li>
+                <li>✓ <strong>GPU Support:</strong> CUDA acceleration if available</li>
+                <li>✓ <strong>Interactive UI:</strong> Dashboard and prediction interface</li>
+                <li>✓ <strong>Model Metrics:</strong> Full evaluation metrics included</li>
+            </ul>
+        </section>
+
+        <div class="row">
+            <div class="card">
+                <h3>📚 Technologies Used</h3>
+                <ul>
+                    <li>Python 3.8+</li>
+                    <li>PyTorch</li>
+                    <li>Transformers (Hugging Face)</li>
+                    <li>Flask</li>
+                    <li>NumPy & Pandas</li>
+                    <li>Scikit-learn</li>
+                    <li>Plotly</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>🔗 API Endpoints</h3>
+                <ul>
+                    <li>POST /predict - Single prediction</li>
+                    <li>POST /predict/batch - Batch predictions</li>
+                    <li>GET /api/stats - Model statistics</li>
+                    <li>GET /model/info - Model information</li>
+                    <li>GET /test - Connection test</li>
+                    <li>GET /dashboard - Metrics dashboard</li>
+                </ul>
+            </div>
+        </div>
+
+        <section class="content">
+            <h2>How It Works</h2>
+            <ol style="font-size: 1.05rem; line-height: 1.8;">
+                <li><strong>Input:</strong> User provides news text</li>
+                <li><strong>Tokenization:</strong> Text is tokenized using DistilBERT tokenizer</li>
+                <li><strong>Processing:</strong> Tokens are fed to the fine-tuned DistilBERT model</li>
+                <li><strong>Classification:</strong> Model outputs probabilities for Fake/Real classes</li>
+                <li><strong>Prediction:</strong> Highest probability class is selected as prediction</li>
+                <li><strong>Response:</strong> Result returned with confidence scores</li>
+            </ol>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Assignment 3 - Hugging Face Model Deployment | ML Course</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Prediction form handler
+        document.getElementById('prediction-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const text = document.getElementById('news-text').value.trim();
+            if (!text) {
+                showNotification('Please enter text to predict', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text: text})
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const predictionDiv = document.getElementById('prediction-result');
+                    const resultContent = document.getElementById('result-content');
+                    
+                    const predictionLabel = result.prediction_label;
+                    const fakeProb = (result.probability.fake_news * 100).toFixed(2);
+                    const realProb = (result.probability.real_news * 100).toFixed(2);
+                    const confidence = (result.confidence * 100).toFixed(2);
+                    
+                    resultContent.innerHTML = `
+                        <div style="margin: 1rem 0;">
+                            <p><strong>Prediction:</strong> <span style="font-size: 1.3rem; color: ${predictionLabel === 'Real News' ? '#28a745' : '#dc3545'};">${predictionLabel}</span></p>
+                            <p><strong>Confidence:</strong> ${confidence}%</p>
+                            <p><strong>Fake News Probability:</strong> ${fakeProb}%</p>
+                            <p><strong>Real News Probability:</strong> ${realProb}%</p>
+                        </div>
+                        
+                        <div style="margin-top: 1rem; background: #f0f0f0; padding: 1rem; border-radius: 5px;">
+                            <div style="margin-bottom: 0.5rem;">
+                                <strong>Fake: ${fakeProb}%</strong>
+                                <div style="width: 100%; background: #ddd; height: 20px; border-radius: 3px; margin-top: 0.3rem; overflow: hidden;">
+                                    <div style="width: ${fakeProb}%; background: #dc3545; height: 100%; transition: width 0.3s;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <strong>Real: ${realProb}%</strong>
+                                <div style="width: 100%; background: #ddd; height: 20px; border-radius: 3px; margin-top: 0.3rem; overflow: hidden;">
+                                    <div style="width: ${realProb}%; background: #28a745; height: 100%; transition: width 0.3s;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    predictionDiv.style.display = 'block';
+                    showNotification('Prediction completed!', 'success');
+                } else {
+                    showNotification(`Error: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showNotification('Failed to make prediction: ' + error.message, 'error');
+            }
+        });
+    </script>
+</body>
+</html>
